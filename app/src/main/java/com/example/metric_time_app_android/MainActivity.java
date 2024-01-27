@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
                             @Override
                             public void run() {
-                                DisplayTime(timeView);
+                                displayTime(timeView);
                                 Log.d("tag","Updated");
                             }
                         });
@@ -44,20 +44,20 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-    private double CalculateTime() {
+    private double calculateTime() {
         LocalTime time = LocalTime.now();
 
-        double metric_hours = (((time.getHour()*60*60)/0.864)/10000);
-        double metric_minutes = (((time.getMinute()*60)/0.864)/10000);
-        double metric_seconds = (time.getSecond()/0.864/10000);
+        double metricHours = (((time.getHour()*60*60)/0.864)/10000);
+        double metricMinutes = (((time.getMinute()*60)/0.864)/10000);
+        double metricSeconds = (time.getSecond()/0.864/10000);
 
-        return metric_hours + metric_minutes + metric_seconds;
+        return metricHours + metricMinutes + metricSeconds;
     }
-    private void DisplayTime(TextView timeView) {
+    private void displayTime(TextView timeView) {
 
         @SuppressLint("DefaultLocale")
-        String metric_time = String.format("%.4f", CalculateTime());
+        String metricTime = String.format("%.4f", calculateTime());
 
-        timeView.setText(metric_time);
+        timeView.setText(metricTime);
     }
 }
