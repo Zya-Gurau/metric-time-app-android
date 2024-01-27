@@ -1,9 +1,11 @@
 package com.example.metric_time_app_android;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+
 import java.time.LocalTime;
 public class MainActivity extends AppCompatActivity {
 
@@ -14,7 +16,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TextView textViewOne = findViewById(R.id.textView1);
+        TextView timeView = findViewById(R.id.currentTimeTextView);
 
         Thread t = new Thread() {
 
@@ -24,20 +26,11 @@ public class MainActivity extends AppCompatActivity {
                     while (!isInterrupted()) {
                         Thread.sleep(864);
                         runOnUiThread(new Runnable() {
+
                             @Override
                             public void run() {
-                                LocalTime time = LocalTime.now();
-
-                                double metric_hours = (((time.getHour()*60*60)/0.864)/10000);
-                                double metric_minutes = (((time.getMinute()*60)/0.864)/10000);
-                                double metric_seconds = (time.getSecond()/0.864/10000);
-
-                                String debug_string = String.valueOf(metric_seconds);
-
-                                String metric_time = String.valueOf( metric_hours+ metric_minutes + metric_seconds);
-
-                                textViewOne.setText(metric_time);
-                                Log.d("tag",metric_time);
+                                DisplayTime(timeView);
+                                Log.d("tag","Updated");
                             }
                         });
                     }
@@ -51,5 +44,20 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
+    private double CalculateTime() {
+        LocalTime time = LocalTime.now();
 
+        double metric_hours = (((time.getHour()*60*60)/0.864)/10000);
+        double metric_minutes = (((time.getMinute()*60)/0.864)/10000);
+        double metric_seconds = (time.getSecond()/0.864/10000);
+
+        return metric_hours + metric_minutes + metric_seconds;
+    }
+    private void DisplayTime(TextView timeView) {
+
+        @SuppressLint("DefaultLocale")
+        String metric_time = String.format("%.4f", CalculateTime());
+
+        timeView.setText(metric_time);
+    }
 }
