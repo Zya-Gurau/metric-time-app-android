@@ -56,9 +56,9 @@ public class MainActivity extends AppCompatActivity {
         TextView timeView = findViewById(R.id.currentTimeTextView);
         TextView dateView = findViewById(R.id.currentDateTextView);
         dateView.setText(String.valueOf(currentDate.getFormattedDate()));
+        displayTime(timeView);
 
         Thread t = new Thread() {
-
             @Override
             public void run() {
                 try {

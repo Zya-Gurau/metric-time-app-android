@@ -62,4 +62,12 @@ public class CalendarActivity extends AppCompatActivity {
         activity.startActivity(intent);
         activity.finish();
     }
+
+    public void nextMonthAction(View view) {
+
+    }
+
+    public void previousMonthAction(View view) {
+
+    }
 }

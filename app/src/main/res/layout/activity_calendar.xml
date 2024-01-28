@@ -15,8 +15,11 @@
         <include
                 layout="@layout/toolbar"/>
 
+        <include
+            layout="@layout/calendar"/>
 
-    </LinearLayout>
+
+        </LinearLayout>
 
     <RelativeLayout
             android:layout_width="300dp"
