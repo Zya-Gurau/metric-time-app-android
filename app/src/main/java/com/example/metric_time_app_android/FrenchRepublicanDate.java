@@ -1,14 +1,11 @@
 package com.example.metric_time_app_android;
 
+import android.util.Log;
+
 import java.time.*;
 import java.util.TimeZone;
 
 public class FrenchRepublicanDate {
-    LocalDateTime currentDateTime = LocalDateTime.now();
-    LocalDateTime frenchRepEpoch = LocalDateTime.of(1792, Month.SEPTEMBER, 22, 0, 0);
-    ZoneId localTimeZone = ZoneId.systemDefault();
-    ZoneOffset localOffset = localTimeZone.getRules().getOffset(currentDateTime);
-    long adjustedMilliseconds = ((currentDateTime.toEpochSecond(localOffset) - frenchRepEpoch.toEpochSecond(localOffset)) * 1000);
     long millisecondsInDay = 86400000;
     long leapYearAmount = 20925216;
     long equinoxStart = 34284216;
@@ -21,14 +18,14 @@ public class FrenchRepublicanDate {
     int years;
     int yeardays;
 
-    String[] monthNames = {"Vendémiaire","Brumaire", "Frimaire","Nivôse",
+    static String[] monthNames = {"Vendémiaire","Brumaire", "Frimaire","Nivôse",
             "Pluviôse","Ventôse", "Germinal", "Floréal", "Prairial", "Messidor",
             "Thermidor", "Fructidor", "Sansculottides" };
 
-    String[] weekdayNames = {"Décadi", "Primidi", "Duodi", "Tridi", "Quartidi",
+    static String[] weekdayNames = {"Décadi", "Primidi", "Duodi", "Tridi", "Quartidi",
             "Quintidi", "Sextidi", "Septidi", "Octidi", "Nonidi"};
 
-    String[] dayNames = {"Raisin", "Safran", "Châtaigne", "Colchique", "Cheval", "Balsamine", "Carotte", "Amaranthe", "Panais", "Cuve",
+    static String[] dayNames = {"Raisin", "Safran", "Châtaigne", "Colchique", "Cheval", "Balsamine", "Carotte", "Amaranthe", "Panais", "Cuve",
             "Pomme de terre", "Immortelle", "Potiron", "Réséda", "Âne", "Belle de nuit", "Citrouille",  "Sarrasin", "Tournesol", "Pressoir",
             "Chanvre", "Pêche", "Navet", "Amaryllis","Bœuf",  "Aubergine", "Piment","Tomate","Orge", "Tonneau",
             "Pomme", "Céleri","Poire","Betterave", "Oie","Héliotrope", "Figue",  "Scorsonère", "Alisier",  "Charrue",
@@ -66,7 +63,12 @@ public class FrenchRepublicanDate {
             "Églantier", "Noisette", "Houblon",  "Sorgho", "Écrevisse",  "Bigarade", "Verge d'or",  "Maïs", "Marron", "Panier",
             "la Vertu", "Génie", "Travail", "l'Opinion", "Récompenses",  "la Révolution"};
 
-    public FrenchRepublicanDate() {
+    public FrenchRepublicanDate(LocalDateTime currentDateTime) {
+        LocalDateTime frenchRepEpoch = LocalDateTime.of(1792, Month.SEPTEMBER, 22, 0, 0);
+        ZoneId localTimeZone = ZoneId.systemDefault();
+        ZoneOffset localOffset = localTimeZone.getRules().getOffset(currentDateTime);
+        long adjustedMilliseconds = ((currentDateTime.toEpochSecond(localOffset) - frenchRepEpoch.toEpochSecond(localOffset)) * 1000);
+
         this.days = (int) Math.floor((double) adjustedMilliseconds / millisecondsInDay);
         this.yesterdays = days-1;
         this.isLeapDay = false;
@@ -99,7 +101,9 @@ public class FrenchRepublicanDate {
     }
 
     public int getMonth() {
-
+        if(yeardays > 360) {
+            return 13;
+        }
         return (int) Math.floor((double) this.yeardays / 30);
     }
 
@@ -110,6 +114,10 @@ public class FrenchRepublicanDate {
     public String getWeekName() {
         int date = getDay();
         return weekdayNames[date % 10];
+    }
+
+    public static String getMonthName(int i) {
+        return monthNames[i];
     }
 
     public String getMonthName() {
@@ -125,7 +133,13 @@ public class FrenchRepublicanDate {
     }
 
 
+    public FrenchRepublicanDate minusMonths(LocalDateTime conven,int months) {
+        return new FrenchRepublicanDate(conven.minusMonths(months));
+    }
 
+    public FrenchRepublicanDate plusMonths(LocalDateTime conven, int months) {
+        return new FrenchRepublicanDate(conven.plusMonths(months));
+    }
 
 
 }

@@ -13,6 +13,7 @@ import android.os.Bundle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class MainActivity extends AppCompatActivity {
@@ -51,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        FrenchRepublicanDate currentDate = new FrenchRepublicanDate();
+        FrenchRepublicanDate currentDate = new FrenchRepublicanDate(LocalDateTime.now());
 
         TextView timeView = findViewById(R.id.currentTimeTextView);
         TextView dateView = findViewById(R.id.currentDateTextView);
@@ -69,12 +70,10 @@ public class MainActivity extends AppCompatActivity {
                             @Override
                             public void run() {
                                 displayTime(timeView);
-                                Log.d("tag","Updated");
                             }
                         });
                     }
                 } catch (InterruptedException e) {
-                    Log.d("tag","stopped");
                 }
             }
         };
@@ -121,5 +120,7 @@ public class MainActivity extends AppCompatActivity {
 
         timeView.setText(metricTime);
     }
+
+
 
 }
