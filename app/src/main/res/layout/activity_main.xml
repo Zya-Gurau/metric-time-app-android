@@ -8,22 +8,25 @@
         tools:context=".MainActivity">
     <TextView
             android:id="@+id/currentTimeTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="310dp"
+            android:layout_height="130dp"
             android:text="5.0000"
+            android:textSize="60sp"
+            android:textAlignment="center"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" app:layout_constraintVertical_bias="0.598"
-            app:layout_constraintHorizontal_bias="0.498"/>
+            app:layout_constraintTop_toTopOf="parent" app:layout_constraintVertical_bias="0.319"
+            android:textAppearance="@style/TextAppearance.AppCompat.Large"/>
     <TextView
             android:text="TextView"
+            android:textSize="15sp"
+            android:textAlignment="center"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/currentDateTextView"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="354dp" android:layout_marginBottom="53dp"
-            app:layout_constraintBottom_toTopOf="@+id/currentTimeTextView" android:layout_marginEnd="179dp"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toStartOf="parent"
-            android:layout_marginStart="174dp"/>
+            app:layout_constraintBottom_toTopOf="@+id/currentTimeTextView" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.215" app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="175dp" android:layout_marginEnd="175dp"
+            app:layout_constraintEnd_toEndOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
