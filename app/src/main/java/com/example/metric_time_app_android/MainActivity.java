@@ -5,9 +5,13 @@ import android.util.Log;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import java.time.LocalTime;
+
 public class MainActivity extends AppCompatActivity {
+
+    DrawerLayout drawerLayout;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,9 +46,8 @@ public class MainActivity extends AppCompatActivity {
         };
 
         t.start();
-
-
     }
+
     private double calculateTime() {
         LocalTime time = LocalTime.now();
 
@@ -61,4 +64,5 @@ public class MainActivity extends AppCompatActivity {
 
         timeView.setText(metricTime);
     }
+
 }
