@@ -11,12 +11,16 @@ public class FrenchRepublicanDate {
     long equinoxStart = 34284216;
     int days;
     int yesterdays;
-    boolean isLeapDay;
+    boolean isLeapYear;
     int unadjustedYears;
     int leapYears;
     int yesterdayLeapYears;
     int years;
     int yeardays;
+
+    int currentDay;
+    int currentMonth;
+    int currentYear;
 
     static String[] monthNames = {"Vendémiaire","Brumaire", "Frimaire","Nivôse",
             "Pluviôse","Ventôse", "Germinal", "Floréal", "Prairial", "Messidor",
@@ -68,43 +72,51 @@ public class FrenchRepublicanDate {
         ZoneId localTimeZone = ZoneId.systemDefault();
         ZoneOffset localOffset = localTimeZone.getRules().getOffset(currentDateTime);
         long adjustedMilliseconds = ((currentDateTime.toEpochSecond(localOffset) - frenchRepEpoch.toEpochSecond(localOffset)) * 1000);
-
         this.days = (int) Math.floor((double) adjustedMilliseconds / millisecondsInDay);
         this.yesterdays = days-1;
-        this.isLeapDay = false;
+        this.isLeapYear = false;
         this.unadjustedYears = (int) Math.floor( (double) days / 365);
         this.leapYears = (int) Math.floor((double) ((leapYearAmount * unadjustedYears) + equinoxStart) / millisecondsInDay);
-        this.yesterdayLeapYears = (int) Math.floor(((leapYearAmount * Math.floor((double) yesterdays / 365)) + equinoxStart)/ millisecondsInDay);
+        this.yesterdayLeapYears  = (int) Math.floor((double) ((leapYearAmount * (unadjustedYears-1)) + equinoxStart) / millisecondsInDay);
+
+        //this.yesterdayLeapYears = (int) Math.floor(((leapYearAmount * Math.floor((double) yesterdays / 365)) + equinoxStart)/ millisecondsInDay);
 
         this.years = (int) Math.floor((double) (days - leapYears) /365);
 
         if(yesterdayLeapYears != leapYears) {
-            this.isLeapDay = true;
+            this.isLeapYear = true;
         }
 
         this.yeardays = (days - leapYears) % 365;
 
-        if(isLeapDay) {
+        if(isLeapYear) {
             this.yeardays++;
         }
+
+        this.currentDay = (yeardays % 30)+1;
+        this.currentMonth = (int) Math.floor((double) this.yeardays / 30);
+        this.currentYear = (++years);
     }
 
-    public int getDay() {
-        int date = yeardays % 30;
-        date++;
+    public static FrenchRepublicanDate of(int year, int month, int day) {
+        FrenchRepublicanDate date = new FrenchRepublicanDate(LocalDateTime.now());
+        date.currentDay = day;
+        date.currentMonth = month;
+        date.currentYear = year;
+
         return date;
     }
 
+    public int getDay() {
+        return currentDay;
+    }
+
     public int getYear() {
-        this.years++;
-        return this.years;
+        return currentYear;
     }
 
     public int getMonth() {
-        if(yeardays > 360) {
-            return 13;
-        }
-        return (int) Math.floor((double) this.yeardays / 30);
+        return currentMonth;
     }
 
     public int getDecade() {
@@ -133,13 +145,118 @@ public class FrenchRepublicanDate {
     }
 
 
-    public FrenchRepublicanDate minusMonths(LocalDateTime conven,int months) {
-        return new FrenchRepublicanDate(conven.minusMonths(months));
+    public FrenchRepublicanDate minusMonths(int months) {
+        if(this.currentMonth > 0) {
+            this.currentMonth -= 1;
+        } else {
+            this.currentMonth = 12;
+            this.currentYear -= 1;
+        }
+        return this;
     }
 
-    public FrenchRepublicanDate plusMonths(LocalDateTime conven, int months) {
-        return new FrenchRepublicanDate(conven.plusMonths(months));
+    public FrenchRepublicanDate plusMonths(int months) {
+        if(this.currentMonth <12) {
+            this.currentMonth += 1;
+        } else {
+            this.currentMonth = 0;
+            this.currentYear += 1;
+        }
+        return this;
     }
 
+    public void addOneDay() {
+        if (currentDay == 30) {
+            currentDay = 1;
+            if(currentMonth <12) {
+                currentMonth += 1;
+            } else {
+                currentMonth = 0;
+                currentYear += 1;
+            }
+        } else {
+            currentDay += 1;
+        }
+    }
 
+    public void subOneDay() {
+        if (currentDay == 1) {
+            currentDay = 30;
+            if(currentMonth >0) {
+                currentMonth -= 1;
+            } else {
+                currentMonth = 12;
+                currentYear -= 1;
+            }
+        } else {
+            currentDay -= 1;
+        }
+    }
+
+    public FrenchRepublicanDate plusDays(int i) {
+        FrenchRepublicanDate newDate = of(this.currentYear, this.currentMonth, this.currentDay);
+        for(int j = 1; j <= i; j++) {
+            newDate.addOneDay();
+        }
+        return newDate;
+    }
+
+    public FrenchRepublicanDate minusDays(int i) {
+        FrenchRepublicanDate newDate = of(this.currentYear, this.currentMonth, this.currentDay);
+        for(int j = 1; j <= i; j++) {
+            newDate.subOneDay();
+            //Log.d("tag", String.valueOf(this.getDay()));
+        }
+        return newDate;
+    }
+
+    public boolean isBefore(FrenchRepublicanDate date) {
+        int thisDays;
+        int dateDays;
+
+        thisDays = this.currentDay;
+        thisDays += (this.currentMonth-1) * 30;
+        thisDays += (this.currentYear-1) * 12 * 30;
+
+        dateDays = date.currentDay;
+        dateDays += (date.currentMonth-1) * 30;
+        dateDays += (date.currentYear-1) * 12 * 30;
+
+        return thisDays < dateDays;
+
+    }
+
+    public boolean isAfter(FrenchRepublicanDate date) {
+        int thisDays;
+        int dateDays;
+
+        thisDays = this.currentDay;
+        thisDays += (this.currentMonth-1) * 30;
+        thisDays += (this.currentYear-1) * 12 * 30;
+
+        dateDays = date.currentDay;
+        dateDays += (date.currentMonth-1) * 30;
+        dateDays += (date.currentYear-1) * 12 * 30;
+
+        return thisDays > dateDays;
+    }
+
+    public boolean approxEquals(FrenchRepublicanDate date) {
+        if(this.getYear() == date.getYear() & this.getMonth() == date.getMonth() & this.getDay() == date.getDay()) {
+            return true;
+        }
+        return false;
+    }
+
+    public int getDaysInMonth() {
+        if (this.getMonth() == 12) {
+            if(!this.isLeapYear) {
+                return 5;
+            } else {
+                return 6;
+            }
+        } else {
+            return 30;
+        }
+    }
 }
