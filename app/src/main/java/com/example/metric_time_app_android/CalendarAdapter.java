@@ -45,7 +45,7 @@ class CalendarAdapter extends RecyclerView.Adapter<CalendarViewHolder>
     {
         final FrenchRepublicanDate date = days.get(position);
         if(date == null){
-            holder.dayOfMonth.setText("null");
+            holder.dayOfMonth.setText("");
             holder.dayOfWeek.setText("");
         } else {
             holder.dayOfMonth.setText(String.valueOf(date.getDay()));

@@ -6,22 +6,6 @@ import java.time.*;
 import java.util.TimeZone;
 
 public class FrenchRepublicanDate {
-    long millisecondsInDay = 86400000;
-    long leapYearAmount = 20925216;
-    long equinoxStart = 34284216;
-    int days;
-    int yesterdays;
-    boolean isLeapYear;
-    int unadjustedYears;
-    int leapYears;
-    int yesterdayLeapYears;
-    int years;
-    int yeardays;
-
-    int currentDay;
-    int currentMonth;
-    int currentYear;
-
     static String[] monthNames = {"Vendémiaire","Brumaire", "Frimaire","Nivôse",
             "Pluviôse","Ventôse", "Germinal", "Floréal", "Prairial", "Messidor",
             "Thermidor", "Fructidor", "Sansculottides" };
@@ -66,45 +50,65 @@ public class FrenchRepublicanDate {
             "Pastèque", "Fenouil", "Épine vinette",  "Noix","Truite", "Citron","Cardère", "Nerprun",  "Tagette",  "Hotte",
             "Églantier", "Noisette", "Houblon",  "Sorgho", "Écrevisse",  "Bigarade", "Verge d'or",  "Maïs", "Marron", "Panier",
             "la Vertu", "Génie", "Travail", "l'Opinion", "Récompenses",  "la Révolution"};
+    boolean isLeapYear;
+    private int currentDay;
+    private int currentMonth;
+    private int currentYear;
+    private int currentDayInYear;
 
-    public FrenchRepublicanDate(LocalDateTime currentDateTime) {
-        LocalDateTime frenchRepEpoch = LocalDateTime.of(1792, Month.SEPTEMBER, 22, 0, 0);
-        ZoneId localTimeZone = ZoneId.systemDefault();
-        ZoneOffset localOffset = localTimeZone.getRules().getOffset(currentDateTime);
-        long adjustedMilliseconds = ((currentDateTime.toEpochSecond(localOffset) - frenchRepEpoch.toEpochSecond(localOffset)) * 1000);
-        this.days = (int) Math.floor((double) adjustedMilliseconds / millisecondsInDay);
-        this.yesterdays = days-1;
-        this.isLeapYear = false;
-        this.unadjustedYears = (int) Math.floor( (double) days / 365);
-        this.leapYears = (int) Math.floor((double) ((leapYearAmount * unadjustedYears) + equinoxStart) / millisecondsInDay);
-        this.yesterdayLeapYears  = (int) Math.floor((double) ((leapYearAmount * (unadjustedYears-1)) + equinoxStart) / millisecondsInDay);
 
-        //this.yesterdayLeapYears = (int) Math.floor(((leapYearAmount * Math.floor((double) yesterdays / 365)) + equinoxStart)/ millisecondsInDay);
 
-        this.years = (int) Math.floor((double) (days - leapYears) /365);
+    public FrenchRepublicanDate(LocalDate currentDate) {
+        LocalDate frenchEpoch = LocalDate.of(1792, Month.SEPTEMBER, 22);
+        LocalDate current = LocalDate.now();
+        int days = (int) (currentDate.toEpochDay() - frenchEpoch.toEpochDay());
+        //this.days = (int) Math.floor((double) adjustedMilliseconds / millisecondsInDay);
+        int unadjustedYears = (int) Math.floor( (double) days / 365);
+        int leapYears = getLeapYears(unadjustedYears+1);
+        int yesterdayLeapYears = getLeapYears(unadjustedYears);
+        int years = (int) Math.floor((double) (days - (leapYears-1)) /365);
+        years = years + 1;
+        this.isLeapYear = isLeap(years);
 
-        if(yesterdayLeapYears != leapYears) {
-            this.isLeapYear = true;
-        }
 
-        this.yeardays = (days - leapYears) % 365;
+        int yeardays = ((days) - (leapYears-1)) % 365;
 
         if(isLeapYear) {
-            this.yeardays++;
+            yeardays++;
         }
 
         this.currentDay = (yeardays % 30)+1;
-        this.currentMonth = (int) Math.floor((double) this.yeardays / 30);
-        this.currentYear = (++years);
+        this.currentMonth = (int) Math.floor((double) yeardays / 30);
+        this.currentYear = years;
+        this.currentDayInYear = yeardays;
+
+
+    }
+
+    public FrenchRepublicanDate(int year, int month, int day) {
+        this.currentYear = year;
+        this.currentMonth = month;
+        this.currentDay = day;
+        this.currentDayInYear = (((month) * 30)+day)-1;
+        this.isLeapYear = isLeap(year);
+
+    }
+    private static int getLeapYears(int year) {
+        int leapYears = 3;
+        for (int i =12; i<=year; i++) {
+            if (isLeap(i)) {
+                leapYears += 1;
+            }
+        }
+        return leapYears;
+    }
+
+    public static boolean isLeap(int year) {
+        return  (year % 4 == 0 & year % 100 != 0 & year % 400 != 0 & year % 4000 != 0);
     }
 
     public static FrenchRepublicanDate of(int year, int month, int day) {
-        FrenchRepublicanDate date = new FrenchRepublicanDate(LocalDateTime.now());
-        date.currentDay = day;
-        date.currentMonth = month;
-        date.currentYear = year;
-
-        return date;
+        return new FrenchRepublicanDate(year, month, day);
     }
 
     public int getDay() {
@@ -119,8 +123,12 @@ public class FrenchRepublicanDate {
         return currentMonth;
     }
 
+    public int getDayInYear() {
+        return currentDayInYear;
+    }
+
     public int getDecade() {
-        return (int) Math.floor((double) this.yeardays / 10) + 1;
+        return (int) Math.floor((double) (this.getDayInYear()) / 10)+1;
     }
 
     public String getWeekName() {
@@ -137,7 +145,7 @@ public class FrenchRepublicanDate {
     }
 
     public String getDayName() {
-        return dayNames[this.yeardays];
+        return dayNames[this.getDayInYear()];
     }
 
     public String getFormattedDate() {
@@ -145,52 +153,88 @@ public class FrenchRepublicanDate {
     }
 
 
-    public FrenchRepublicanDate minusMonths(int months) {
+    public FrenchRepublicanDate minusMonth() {
         if(this.currentMonth > 0) {
             this.currentMonth -= 1;
+            this.currentDayInYear -= 30;
         } else {
             this.currentMonth = 12;
             this.currentYear -= 1;
+            this.currentDayInYear = 364;
+            this.currentDay = 5;
+            this.isLeapYear = isLeap(this.currentYear);
         }
         return this;
     }
 
-    public FrenchRepublicanDate plusMonths(int months) {
+    public FrenchRepublicanDate plusMonth() {
         if(this.currentMonth <12) {
             this.currentMonth += 1;
+            //this.currentDayInYear += 30;
         } else {
             this.currentMonth = 0;
             this.currentYear += 1;
+            this.currentDayInYear = 0;
+            this.currentDay = 1;
+            this.isLeapYear = isLeap(this.currentYear);
         }
         return this;
     }
 
     public void addOneDay() {
-        if (currentDay == 30) {
-            currentDay = 1;
-            if(currentMonth <12) {
+        if (currentMonth <12) {
+            if (currentDay < 30) {
+                currentDay += 1;
+
+            } else {
+                currentDay = 1;
                 currentMonth += 1;
+            }
+            currentDayInYear += 1;
+        } else {
+            if (currentDay < 6) {
+                currentDay += 1;
+                currentDayInYear += 1;
             } else {
                 currentMonth = 0;
                 currentYear += 1;
+                currentDayInYear = 0;
+                currentDay = 1;
+                isLeapYear = isLeap(currentYear);
             }
-        } else {
-            currentDay += 1;
         }
+
     }
 
     public void subOneDay() {
-        if (currentDay == 1) {
-            currentDay = 30;
-            if(currentMonth >0) {
-                currentMonth -= 1;
+        if(this.currentMonth > 0) {
+            if (this.currentDay > 1) {
+                this.currentDay -= 1;
+                this.currentDayInYear -= 1;
             } else {
-                currentMonth = 12;
-                currentYear -= 1;
+                this.currentMonth -= 1;
+                this.currentDay = 30;
+                this.currentDayInYear -= 1;
             }
         } else {
-            currentDay -= 1;
+            if (currentDay > 1) {
+                currentDay -= 1;
+                currentDayInYear -= 1;
+            } else {
+                this.currentYear -= 1;
+                this.isLeapYear = isLeap(this.currentYear);
+                this.currentMonth = 12;
+                if(this.isLeapYear) {
+                    this.currentDay = 6;
+                    this.currentDayInYear = 365;
+                } else {
+                    this.currentDay = 5;
+                    this.currentDayInYear = 364;
+                }
+
+            }
         }
+
     }
 
     public FrenchRepublicanDate plusDays(int i) {
@@ -214,14 +258,18 @@ public class FrenchRepublicanDate {
         int thisDays;
         int dateDays;
 
-        thisDays = this.currentDay;
-        thisDays += (this.currentMonth-1) * 30;
-        thisDays += (this.currentYear-1) * 12 * 30;
+        thisDays = currentDay;
+        thisDays += (currentMonth) * 30;
+        thisDays += (currentYear) * 12 * 30;
+
+
 
         dateDays = date.currentDay;
-        dateDays += (date.currentMonth-1) * 30;
-        dateDays += (date.currentYear-1) * 12 * 30;
+        dateDays += (date.currentMonth) * 30;
+        dateDays += (date.currentYear) * 12 * 30;
 
+        Log.d("TAG", String.valueOf(thisDays));
+        Log.d("TAG", String.valueOf(dateDays));
         return thisDays < dateDays;
 
     }

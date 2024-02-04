@@ -103,12 +103,12 @@ public class CalendarActivity extends AppCompatActivity implements CalendarAdapt
     }
 
     public void previousMonthAction(View view) {
-        CalendarUtils.selectedDate = CalendarUtils.selectedDate.minusMonths(1);
+        CalendarUtils.selectedDate = CalendarUtils.selectedDate.minusMonth();
         setMonthView();
     }
 
     public void nextMonthAction(View view) {
-        CalendarUtils.selectedDate = CalendarUtils.selectedDate.plusMonths(1);
+        CalendarUtils.selectedDate = CalendarUtils.selectedDate.plusMonth();
         setMonthView();
     }
 

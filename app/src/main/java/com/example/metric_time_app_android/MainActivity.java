@@ -13,6 +13,7 @@ import android.os.Bundle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
@@ -53,13 +54,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        CalendarUtils.selectedDate = new FrenchRepublicanDate(LocalDateTime.of(2026, Month.SEPTEMBER, 22, 0, 0));
-
-        Log.d("Tag",String.valueOf(CalendarUtils.selectedDate.leapYears));
-        Log.d("Tag",String.valueOf(CalendarUtils.selectedDate.isLeapYear));
-        Log.d("Tag",String.valueOf(CalendarUtils.selectedDate.yesterdayLeapYears));
-        Log.d("Tag",String.valueOf(CalendarUtils.selectedDate.unadjustedYears));
-
+        CalendarUtils.selectedDate = new FrenchRepublicanDate(LocalDate.now());
         TextView timeView = findViewById(R.id.currentTimeTextView);
         TextView dateView = findViewById(R.id.currentDateTextView);
         dateView.setText(String.valueOf(CalendarUtils.selectedDate.getFormattedDate()));

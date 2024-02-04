@@ -48,11 +48,14 @@ public class CalendarUtils {
         FrenchRepublicanDate current = sundayForDate(selectedDate);
         if (current != null) {
             FrenchRepublicanDate endDate = current.plusDays(10);
-
+            Log.d("TAG", endDate.getFormattedDate());
+            Log.d("TAG", current.getFormattedDate());
+            //Log.d("TAG", String.valueOf(endDate.getDayInYear()));
 
             while (current.isBefore(endDate))
             {
                 days.add(current);
+                //Log.d("TAG", current.getFormattedDate());
                 current = current.plusDays(1);
             }
         }
