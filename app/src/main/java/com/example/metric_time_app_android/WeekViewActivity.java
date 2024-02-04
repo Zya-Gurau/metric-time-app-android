@@ -89,13 +89,29 @@ public class WeekViewActivity extends AppCompatActivity implements CalendarAdapt
 
     public void previousWeekAction(View view)
     {
-        CalendarUtils.selectedDate = CalendarUtils.selectedDate.minusDays(10);
+        if(CalendarUtils.selectedDate.getMonth() != 12) {
+            if (CalendarUtils.selectedDate.getMonth() == 0 & CalendarUtils.selectedDate.getDay() <= 10) {
+                CalendarUtils.selectedDate = FrenchRepublicanDate.of(CalendarUtils.selectedDate.getYear()-1, 12, 5);
+
+            } else {
+                CalendarUtils.selectedDate = CalendarUtils.selectedDate.minusDays(10);
+            }
+
+        } else {
+            CalendarUtils.selectedDate = FrenchRepublicanDate.of(CalendarUtils.selectedDate.getYear(), 11, 25);
+        }
+
         setWeekView();
     }
 
     public void nextWeekAction(View view)
     {
-        CalendarUtils.selectedDate = CalendarUtils.selectedDate.plusDays(10);
+        if(CalendarUtils.selectedDate.getMonth() != 12) {
+            CalendarUtils.selectedDate = CalendarUtils.selectedDate.plusDays(10);
+        } else {
+            CalendarUtils.selectedDate = FrenchRepublicanDate.of(CalendarUtils.selectedDate.getYear()+1, 0, 1);
+        }
+
         setWeekView();
     }
 
