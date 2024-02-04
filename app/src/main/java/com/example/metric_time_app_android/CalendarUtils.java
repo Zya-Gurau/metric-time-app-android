@@ -48,6 +48,7 @@ public class CalendarUtils {
         FrenchRepublicanDate current = sundayForDate(selectedDate);
         if (current != null) {
             FrenchRepublicanDate endDate = current.plusDays(10);
+            Log.d("TAG", "daysInWeekArray: " + current.getDayInYear());
             Log.d("TAG", endDate.getFormattedDate());
             Log.d("TAG", current.getFormattedDate());
             //Log.d("TAG", String.valueOf(endDate.getDayInYear()));
@@ -55,7 +56,7 @@ public class CalendarUtils {
             while (current.isBefore(endDate))
             {
                 days.add(current);
-                //Log.d("TAG", current.getFormattedDate());
+                Log.d("TAG", current.getFormattedDate());
                 current = current.plusDays(1);
             }
         }
@@ -66,6 +67,7 @@ public class CalendarUtils {
     private static FrenchRepublicanDate sundayForDate(FrenchRepublicanDate current)
     {
         FrenchRepublicanDate oneWeekAgo = current.minusDays(10);
+        Log.d("TAG", "SundayForDate: " + current.getDayInYear());
 
         while (current.isAfter(oneWeekAgo))
         {
@@ -73,6 +75,7 @@ public class CalendarUtils {
                 return current;
             } else{
                 current = current.minusDays(1);
+                Log.d("TAG", "SundayForDate: " + current.getDayInYear());
         }
 
         }

@@ -145,6 +145,7 @@ public class FrenchRepublicanDate {
     }
 
     public String getDayName() {
+        Log.d("TAG", "FR DATE: " + this.getDayInYear());
         return dayNames[this.getDayInYear()];
     }
 
@@ -238,11 +239,29 @@ public class FrenchRepublicanDate {
     }
 
     public FrenchRepublicanDate plusDays(int i) {
-        FrenchRepublicanDate newDate = of(this.currentYear, this.currentMonth, this.currentDay);
-        for(int j = 1; j <= i; j++) {
-            newDate.addOneDay();
+        //max of 30 days
+        int year = this.currentYear;
+        int month = this.currentMonth;
+        int day = this.currentDay;
+        if (month != 12) {
+            day = (this.currentDay + i) % 30;
+            if (day == 0) {
+                day = 30;
+            }
+            if (day < this.currentDay + i) {
+                month += 1;
+            }
+        } else {
+            if (day + i > 6) {
+                day = (this.currentDay+i) -6;
+                month = 0;
+                year += 1;
+            } else {
+                day = (this.currentDay+i);
+            }
         }
-        return newDate;
+
+        return of(year, month, day);
     }
 
     public FrenchRepublicanDate minusDays(int i) {
@@ -256,35 +275,53 @@ public class FrenchRepublicanDate {
 
     public boolean isBefore(FrenchRepublicanDate date) {
         int thisDays;
+        int thisLeapYears = getLeapYears(this.currentYear-1);
         int dateDays;
+        int dateLeapYears = getLeapYears(date.currentYear-1);
 
         thisDays = currentDay;
         thisDays += (currentMonth) * 30;
         thisDays += (currentYear) * 12 * 30;
-
+        thisDays += (currentYear - thisLeapYears) * 5;
+        thisDays += thisLeapYears * 6;
+        thisDays += (getLeapYears(currentYear-1));
 
 
         dateDays = date.currentDay;
         dateDays += (date.currentMonth) * 30;
         dateDays += (date.currentYear) * 12 * 30;
+        dateDays += (date.currentYear - dateLeapYears) * 5;
+        dateDays += dateLeapYears * 6;
+        dateDays += getLeapYears(date.currentYear-1);
 
-        Log.d("TAG", String.valueOf(thisDays));
-        Log.d("TAG", String.valueOf(dateDays));
+        Log.d("TAG", "this date: " + this.getFormattedDate());
+        Log.d("TAG", "this: " + thisDays);
+        Log.d("TAG", "other date: " + date.getFormattedDate());
+        Log.d("TAG", "other: " + dateDays);
         return thisDays < dateDays;
 
     }
 
     public boolean isAfter(FrenchRepublicanDate date) {
         int thisDays;
+        int thisLeapYears = getLeapYears(this.currentYear-1);
         int dateDays;
+        int dateLeapYears = getLeapYears(date.currentYear-1);
 
-        thisDays = this.currentDay;
-        thisDays += (this.currentMonth-1) * 30;
-        thisDays += (this.currentYear-1) * 12 * 30;
+        thisDays = currentDay;
+        thisDays += (currentMonth) * 30;
+        thisDays += (currentYear) * 12 * 30;
+        thisDays += (currentYear - thisLeapYears) * 5;
+        thisDays += thisLeapYears * 6;
+        thisDays += (getLeapYears(currentYear-1));
+
 
         dateDays = date.currentDay;
-        dateDays += (date.currentMonth-1) * 30;
-        dateDays += (date.currentYear-1) * 12 * 30;
+        dateDays += (date.currentMonth) * 30;
+        dateDays += (date.currentYear) * 12 * 30;
+        dateDays += (date.currentYear - dateLeapYears) * 5;
+        dateDays += dateLeapYears * 6;
+        dateDays += getLeapYears(date.currentYear-1);
 
         return thisDays > dateDays;
     }
